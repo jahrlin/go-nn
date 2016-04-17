@@ -1,0 +1,129 @@
+<!-- DOCTYPE html -->
+<html>
+    <head>
+        <title>Perceptron - visual example</title>
+        <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(getData);
+
+        function getData() {
+            $.get('/data/', function(data) {
+                drawChart(data); 
+            });
+        }
+
+        function f(x) {
+            return 0.4 * x + 1;
+        }
+
+        function drawChart(input) {
+            var data1 = new google.visualization.DataTable();
+            data1.addColumn('number', 'X');
+            data1.addColumn('number', 'Y 1');
+
+            data1.addRows([
+                    [-400, f(-400)],
+                    [400, f(400)]
+            ]);
+
+            var data2 = new google.visualization.DataTable();
+            data2.addColumn('number', 'X');
+            data2.addColumn('number', 'Y 2');
+            
+            var defaultStyle = 'point { size: 5, fill-color: green; }';
+            var fillStyle = 'point { size: 5; fill-color: #a52714; }';
+
+            data2 = google.visualization.arrayToDataTable
+                ([['X', 'Y 2', {'type': 'string', 'role': 'style'}],
+                    [input.Dots[0].X, input.Dots[0].Y, input.Dots[0].Fill ? fillStyle : defaultStyle]
+                ]);
+
+
+            var joinedData = google.visualization.data.join(data1, data2, 'full', [[0, 0]], [1], [1,2]);
+            var options = {
+                legend: 'none',
+                hAxis: { ticks: [],
+                    viewWindow: {
+                        min: -400,
+                        max: 400
+                    } 
+                },
+                vAxis: { 
+                    ticks: [],
+                    viewWindow: {
+                        min: -100,
+                        max: 100
+                    } 
+                },
+                colors: ['#703583'],
+                pointShape: 'diamond',
+                trendlines: {
+                    0: {
+                        type: 'linear',
+                        degree: 3,
+                        visibleInLegend: true,
+                        pointSize: 20, // Set the size of the trendline dots.
+                        opacity: 0.5,
+                        color: 'green'
+                    },
+                    2: {
+                        type: 'linear',
+                        opacity: 0.5,
+                        color: 'blue'
+                    }
+                },
+            };
+
+            chart = new google.visualization.ScatterChart(document.getElementById('chart_pointSize'));
+            data = joinedData;
+            opts = options;
+
+            data3 = new google.visualization.DataTable();
+            data3.addColumn('number', 'X');
+            data3.addColumn('number', 'Y 1');
+            data3.addRows([
+               [input.Lines[0].X1, input.Lines[0].Y1],
+               [input.Lines[0].X2, input.Lines[0].Y2]
+            ]);
+               
+            var joinedData2 = google.visualization.data.join(joinedData, data3, 'full', [[0, 0]], [1, 2], [1]);
+
+            doDraw();
+
+            var count = input.Dots.length;
+
+            var i = 1;
+            function drawLoop() {
+                setTimeout(function() {
+                    data2.addRow([input.Dots[i].X, input.Dots[i].Y, input.Dots[i].Fill ? fillStyle : defaultStyle]);
+                    data3.setValue(0, 0, input.Lines[i].X1);
+                    data3.setValue(0, 1, input.Lines[i].Y1);
+                    data3.setValue(1, 0, input.Lines[i].X2);
+                    data3.setValue(1, 1, input.Lines[i].Y2);
+
+                    joinedData = google.visualization.data.join(data1, data2, 'full', [[0, 0]], [1], [1, 2]);
+                    joinedData = google.visualization.data.join(joinedData, data3, 'full', [[0, 0]], [1, 2], [1]);
+
+                    data = joinedData;
+                    doDraw();
+                    i++;
+                    if (i < count) {
+                        drawLoop();
+                    }
+                }, 50);
+            }
+
+            drawLoop();
+        }
+        
+        function doDraw() {
+            chart.draw(data, opts);
+        }
+        </script>
+    </head>
+    <body>
+        <div id="chart_pointSize" style="width: 900px; height: 500px;"></div>
+    </body>
+</html>

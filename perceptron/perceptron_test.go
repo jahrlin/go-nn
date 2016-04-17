@@ -1,6 +1,8 @@
 package gonn
 
 import (
+	"github.com/nsf/termbox-go"
+	"math/rand"
 	"testing"
 )
 
@@ -23,4 +25,32 @@ func Test_perceptron(t *testing.T) {
 	if output2 != expected2 {
 		t.Errorf("\nResult	%v\nExpected %v", output2, expected2)
 	}
+
+	err := termbox.Init()
+	if err != nil {
+		panic(err)
+	}
+
+	defer termbox.Close()
+
+	event_queue := make(chan termbox.Event)
+	go func() {
+		for {
+			event_queue <- termbox.PollEvent()
+		}
+	}()
+
+	draw()
+}
+
+func draw() {
+	w, h := termbox.Size()
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			termbox.SetCell(x, y, ' ', termbox.ColorDefault,
+				termbox.Attribute(rand.Int()%8)+1)
+		}
+	}
+	termbox.Flush()
 }
