@@ -35,13 +35,10 @@ func main() {
 		if float64(y) < f(float64(x)) {
 			answer = -1
 		}
-
-		//fmt.Printf("x: %v, y: %v, a %v\n", x, y, answer)
 		trainers[i] = gonn.NewTrainer(x, y, answer)
 	}
 
 	//everything is set up, start looping through traniners and keep sending input to our ptron
-	//ptron.Train(trainers[count].Inputs, trainers[count].Answer)
 	count = len(trainers)
 	for i := 0; i < count; i++ {
 		ptron.Train(trainers[i].Inputs, trainers[i].Answer)
