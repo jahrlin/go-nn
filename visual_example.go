@@ -7,11 +7,11 @@ import "net/http"
 import "encoding/json"
 
 func f(x float64) float64 {
-	return float64(0.4)*float64(x) + float64(1)
+	return 0.4*x + float64(1)
 }
 
-func random(min, max int) int {
-	return rand.Intn(max-min) + min
+func random(min, max int) float64 {
+	return float64(rand.Intn(max-min) + min)
 }
 
 var count = 0
@@ -30,11 +30,12 @@ func main() {
 		x := random(-400, 400)
 		y := random(-100, 100)
 
-		answer := 1
+		answer := float64(1)
 
 		if float64(y) < f(float64(x)) {
 			answer = -1
 		}
+
 		trainers[i] = gonn.NewTrainer(x, y, answer)
 	}
 
@@ -64,16 +65,16 @@ func main() {
 }
 
 type Dot struct {
-	X    int
-	Y    int
+	X    float64
+	Y    float64
 	Fill bool
 }
 
 type Line struct {
 	X1 int
-	Y1 float32
+	Y1 float64
 	X2 int
-	Y2 float32
+	Y2 float64
 }
 
 type Data struct {
