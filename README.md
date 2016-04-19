@@ -17,7 +17,7 @@ green line shows f(x), for reference, and blue line shows the current guess
 (https://raw.githubusercontent.com/jahrlin/go-nn/master/visual_example.gif)
 
 ## TODO / issues
-- [ ] get rid of the casting and use same-size floats instead
+- [x] get rid of the casting and use same-size floats instead
 - [ ] subscribe to google.visualization.events to avoid melting the client GPU
 - [ ] should probably use requestAnimationFrame for that sweet 60 fps
 - [ ] make it async with a websocket or something
